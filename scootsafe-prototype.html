@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScootSafe – Protótipo Interativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00C48C;
+    --green-light: #E6FBF4;
+    --red: #FF4D6A;
+    --red-light: #FFF0F3;
+    --yellow: #FFB300;
+    --yellow-light: #FFF8E1;
+    --navy: #0D1B2A;
+    --gray: #8896A5;
+    --bg: #F4F7FB;
+    --white: #FFFFFF;
+    --card: #FFFFFF;
+    --border: #E8ECF2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #1A1F35;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+  }
+  .logo-big {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: -1px;
+  }
+  .logo-big span { color: white; }
+  .header p { color: #8896A5; margin-top: 6px; font-size: 15px; }
+
+  /* Nav tabs */
+  .nav-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tab-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: 2px solid #2E3550;
+    background: transparent;
+    color: #8896A5;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .tab-btn.active {
+    background: var(--green);
+    border-color: var(--green);
+    color: #0D1B2A;
+  }
+
+  /* Phone shell */
+  .phone-container {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .phone {
+    width: 375px;
+    background: var(--navy);
+    border-radius: 44px;
+    padding: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px #2E3550;
+    position: relative;
+  }
+  .phone-notch {
+    width: 100px;
+    height: 28px;
+    background: var(--navy);
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto 4px;
+    position: relative;
+    z-index: 10;
+  }
+  .phone-screen {
+    background: var(--bg);
+    border-radius: 32px;
+    overflow: hidden;
+    min-height: 720px;
+  }
+
+  /* Screen visibility */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ===== SPLASH ===== */
+  .splash {
+    background: linear-gradient(160deg, #0D1B2A 0%, #1B2D42 60%, #0D2414 100%);
+    min-height: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px;
+  }
+  .splash-icon {
+    width: 90px;
+    height: 90px;
+    background: var(--green);
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    box-shadow: 0 0 40px rgba(0,196,140,0.4);
+  }
+  .splash h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -1px;
+  }
+  .splash h1 span { color: var(--green); }
+  .splash p { color: #8896A5; font-size: 14px; text-align: center; line-height: 1.6; }
+  .splash-btn {
+    margin-top: 20px;
+    background: var(--green);
+    color: #0D1B2A;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 48px;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0,196,140,0.35);
+    transition: transform 0.15s;
+  }
+  .splash-btn:hover { transform: translateY(-2px); }
+
+  /* ===== CADASTRO ===== */
+  .cadastro-screen {
+    background: white;
+    min-height: 720px;
+  }
+  .form-header {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1B2D42 100%);
+    padding: 50px 24px 28px;
+    position: relative;
+  }
+  .form-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .form-header p { color: #8896A5; font-size: 13px; margin-top: 4px; }
+  .form-body { padding: 24px; }
+  .form-section-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin: 16px 0 10px;
+  }
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: var(--green); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cadastro-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--green);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: #0D1B2A;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 8px 20px rgba(0,196,140,0.3);
+  }
+
+  /* ===== HOME / DASHBOARD ===== */
+  .home-screen {
+    background: var(--bg);
+    min-height: 720px;
+  }
+  .home-topbar {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1B2D42 100%);
+    padding: 50px 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-topbar::before {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 150px; height: 150px;
+    background: rgba(0,196,140,0.1);
+    border-radius: 50%;
+  }
+  .topbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-greet { color: #8896A5; font-size: 13px; }
+  .topbar-name { color: white; font-size: 18px; font-weight: 800; }
+  .topbar-avatar {
+    width: 42px; height: 42px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  /* Status card */
+  .status-card {
+    margin: -16px 16px 0;
+    background: white;
+    border-radius: 20px;
+    padding: 18px 20px;
+    box-shadow: 0 8px 30px rgba(13,27,42,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+  .status-left { display: flex; align-items: center; gap: 14px; }
+  .status-dot-wrap {
+    width: 48px; height: 48px;
+    background: var(--green-light);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .status-label { font-size: 11px; color: var(--gray); font-weight: 700; letter-spacing: 0.5px; }
+  .status-value { font-size: 16px; font-weight: 800; color: var(--navy); }
+  .status-badge {
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 50px;
+  }
+  /* Speed meter */
+  .speed-section { padding: 20px 16px 8px; }
+  .speed-title { font-size: 13px; font-weight: 800; color: var(--gray); letter-spacing: 0.5px; margin-bottom: 14px; text-transform: uppercase; }
+  .speed-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(13,27,42,0.07);
+  }
+  .speed-display {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .speed-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--navy);
+  }
+  .speed-number.warning { color: var(--red); }
+  .speed-unit { font-size: 18px; color: var(--gray); margin-bottom: 12px; font-weight: 700; }
+  .speed-bar-bg {
+    height: 10px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .speed-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s, background 0.3s;
+  }
+  .speed-bar-fill.safe { background: var(--green); width: 45%; }
+  .speed-bar-fill.warning { background: var(--red); width: 85%; }
+  .speed-limit-line { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray); font-weight: 600; }
+  /* Alert box */
+  .alert-box {
+    margin: 0 16px 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .alert-box.safe { background: var(--green-light); color: #00A374; }
+  .alert-box.danger { background: var(--red-light); color: var(--red); }
+  .alert-icon { font-size: 20px; }
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+  .stat-mini {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(13,27,42,0.06);
+  }
+  .stat-mini-icon { font-size: 20px; margin-bottom: 4px; }
+  .stat-mini-val { font-size: 16px; font-weight: 800; color: var(--navy); }
+  .stat-mini-label { font-size: 10px; color: var(--gray); font-weight: 700; margin-top: 2px; }
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    padding: 14px 8px 20px;
+    border-top: 1px solid var(--border);
+    position: sticky;
+    bottom: 0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gray);
+    cursor: pointer;
+  }
+  .nav-item.active { color: var(--green); }
+  .nav-item-icon { font-size: 22px; }
+
+  /* ===== HISTÓRICO ===== */
+  .hist-screen { background: var(--bg); min-height: 720px; }
+  .hist-header {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1B2D42 100%);
+    padding: 50px 20px 24px;
+  }
+  .hist-header h2 { color: white; font-size: 22px; font-weight: 800; }
+  .hist-header p { color: #8896A5; font-size: 13px; margin-top: 2px; }
+  .period-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 16px 8px;
+  }
+  .period-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .period-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+  }
+  .summary-card {
+    margin: 8px 16px;
+    background: white;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 4px 16px rgba(13,27,42,0.07);
+  }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .summary-item { }
+  .summary-val { font-size: 22px; font-weight: 800; color: var(--navy); }
+  .summary-val.red { color: var(--red); }
+  .summary-lbl { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 2px; }
+  .hist-list { padding: 12px 16px; }
+  .hist-day {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(13,27,42,0.05);
+  }
+  .hist-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .hist-day-date { font-size: 14px; font-weight: 800; color: var(--navy); }
+  .hist-day-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 50px;
+  }
+  .hist-day-badge.ok { background: var(--green-light); color: var(--green); }
+  .hist-day-badge.alert { background: var(--red-light); color: var(--red); }
+  .hist-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .hist-bar-label { font-size: 11px; color: var(--gray); width: 80px; font-weight: 600; }
+  .hist-bar-bg { flex: 1; height: 8px; background: var(--border); border-radius: 8px; overflow: hidden; }
+  .hist-bar-f { height: 100%; border-radius: 8px; }
+  .hist-bar-val { font-size: 12px; font-weight: 800; color: var(--navy); width: 50px; text-align: right; }
+  .lock-notice {
+    margin: 0 16px 16px;
+    background: #FFF8E1;
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 12px;
+    color: #8B6914;
+    font-weight: 700;
+  }
+
+  /* ===== ALERTAS ===== */
+  .alert-screen { background: var(--bg); min-height: 720px; }
+  .alert-header {
+    background: linear-gradient(135deg, #2A0D0D 0%, #3D1515 100%);
+    padding: 50px 20px 24px;
+  }
+  .alert-header h2 { color: white; font-size: 22px; font-weight: 800; }
+  .alert-header p { color: #C07070; font-size: 13px; margin-top: 2px; }
+  .alert-item {
+    margin: 8px 16px 0;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: 0 2px 8px rgba(13,27,42,0.05);
+  }
+  .alert-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .alert-dot.red { background: var(--red); }
+  .alert-dot.yellow { background: var(--yellow); }
+  .alert-dot.green { background: var(--green); }
+  .alert-content-title { font-size: 14px; font-weight: 800; color: var(--navy); }
+  .alert-content-desc { font-size: 12px; color: var(--gray); margin-top: 3px; line-height: 1.5; }
+  .alert-content-time { font-size: 11px; color: var(--gray); margin-top: 6px; font-weight: 600; }
+
+  .label-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 50px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .label-tag.new { background: var(--red-light); color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-big">Scoot<span>Safe</span></div>
+  <p>🛴 Protótipo Interativo — Telas Principais</p>
+</div>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showScreen('splash')">Boas-vindas</button>
+  <button class="tab-btn" onclick="showScreen('cadastro')">Cadastro</button>
+  <button class="tab-btn" onclick="showScreen('home')">Dashboard</button>
+  <button class="tab-btn" onclick="showScreen('historico')">Histórico</button>
+  <button class="tab-btn" onclick="showScreen('alertas')">Alertas</button>
+</div>
+
+<div class="phone-container">
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+
+      <!-- SPLASH -->
+      <div class="screen active" id="screen-splash">
+        <div class="splash">
+          <div class="splash-icon">🛴</div>
+          <h1>Scoot<span>Safe</span></h1>
+          <p>Monitoramento de velocidade para scooters de menores de idade.<br>Segurança em tempo real para toda a família.</p>
+          <button class="splash-btn" onclick="showScreen('cadastro')">Começar agora →</button>
+          <p style="margin-top:8px; font-size:12px;">Já tem conta? <span style="color:var(--green); font-weight:800; cursor:pointer;">Entrar</span></p>
+        </div>
+      </div>
+
+      <!-- CADASTRO -->
+      <div class="screen" id="screen-cadastro">
+        <div class="cadastro-screen">
+          <div class="form-header">
+            <h2>Cadastro do Piloto</h2>
+            <p>Dados do menor responsável pela scooter</p>
+          </div>
+          <div class="form-body">
+            <div class="form-section-title">📋 Dados Pessoais</div>
+            <div class="form-group">
+              <label>Nome completo</label>
+              <input type="text" placeholder="Ex: João Pedro Alves" value="João Pedro Alves">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>CPF</label>
+                <input type="text" placeholder="000.000.000-00" value="123.456.789-00">
+              </div>
+              <div class="form-group">
+                <label>RG</label>
+                <input type="text" placeholder="00.000.000-0" value="12.345.678-9">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Data de nascimento</label>
+                <input type="text" placeholder="DD/MM/AAAA" value="15/03/2010">
+              </div>
+              <div class="form-group">
+                <label>Idade</label>
+                <input type="text" placeholder="Anos" value="15 anos">
+              </div>
+            </div>
+            <div class="form-section-title">👨‍👩‍👦 Filiação</div>
+            <div class="form-group">
+              <label>Nome do pai / responsável</label>
+              <input type="text" placeholder="Nome completo" value="Carlos Roberto Alves">
+            </div>
+            <div class="form-group">
+              <label>Nome da mãe / responsável</label>
+              <input type="text" placeholder="Nome completo" value="Maria Fernanda Alves">
+            </div>
+            <div class="form-section-title">📍 Endereço</div>
+            <div class="form-group">
+              <label>Endereço completo</label>
+              <input type="text" placeholder="Rua, número, bairro" value="Rua das Flores, 123, Centro">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" value="Exemplo">
+              </div>
+              <div class="form-group">
+                <label>CEP</label>
+                <input type="text" value="00000-000">
+              </div>
+            </div>
+            <button class="cadastro-btn" onclick="showScreen('home')">Salvar e continuar →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOME / DASHBOARD -->
+      <div class="screen" id="screen-home">
+        <div class="home-screen">
+          <div class="home-topbar">
+            <div class="topbar-row">
+              <div>
+                <div class="topbar-greet">Olá, responsável 👋</div>
+                <div class="topbar-name">João Pedro</div>
+              </div>
+              <div class="topbar-avatar">🧑</div>
+            </div>
+          </div>
+          <div class="status-card">
+            <div class="status-left">
+              <div class="status-dot-wrap">🛴</div>
+              <div>
+                <div class="status-label">SCOOTER</div>
+                <div class="status-value">Conectada</div>
+              </div>
+            </div>
+            <div class="status-badge">🟢 Online</div>
+          </div>
+          <div class="speed-section">
+            <div class="speed-title">⚡ Velocidade Atual</div>
+            <div class="speed-card">
+              <div class="speed-display" id="speed-display">
+                <div class="speed-number" id="speed-num">28</div>
+                <div class="speed-unit">km/h</div>
+              </div>
+              <div class="speed-bar-bg">
+                <div class="speed-bar-fill safe" id="speed-bar"></div>
+              </div>
+              <div class="speed-limit-line">
+                <span>0 km/h</span>
+                <span style="color:var(--red)">⚠ limite: 32 km/h</span>
+                <span>60 km/h</span>
+              </div>
+            </div>
+          </div>
+          <div class="alert-box safe" id="main-alert">
+            <div class="alert-icon">✅</div>
+            <div>Velocidade dentro do limite permitido</div>
+          </div>
+          <div class="stats-row">
+            <div class="stat-mini">
+              <div class="stat-mini-icon">📍</div>
+              <div class="stat-mini-val">3,2 km</div>
+              <div class="stat-mini-label">Percurso hoje</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-icon">⏱</div>
+              <div class="stat-mini-val">24 min</div>
+              <div class="stat-mini-label">Tempo uso</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-icon">🚨</div>
+              <div class="stat-mini-val" style="color:var(--red)">2</div>
+              <div class="stat-mini-label">Alertas hoje</div>
+            </div>
+          </div>
+          <!-- Simulate speed toggle -->
+          <div style="padding: 0 16px 8px; display:flex; gap:10px;">
+            <button onclick="setSpeed(28)" style="flex:1;padding:10px;border-radius:12px;border:2px solid var(--green);background:var(--green-light);color:var(--green);font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:13px;">✅ Simular 28km/h</button>
+            <button onclick="setSpeed(41)" style="flex:1;padding:10px;border-radius:12px;border:2px solid var(--red);background:var(--red-light);color:var(--red);font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;font-size:13px;">⚠ Simular 41km/h</button>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item active">
+              <div class="nav-item-icon">🏠</div>
+              <div>Início</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('historico')">
+              <div class="nav-item-icon">📊</div>
+              <div>Histórico</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('alertas')">
+              <div class="nav-item-icon">🔔</div>
+              <div>Alertas</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-icon">⚙️</div>
+              <div>Config</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO -->
+      <div class="screen" id="screen-historico">
+        <div class="hist-screen">
+          <div class="hist-header">
+            <h2>Histórico</h2>
+            <p>Registros permanentes de João Pedro</p>
+          </div>
+          <div class="period-tabs">
+            <button class="period-btn active">Diário</button>
+            <button class="period-btn" onclick="this.parentNode.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Semanal</button>
+            <button class="period-btn" onclick="this.parentNode.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Mensal</button>
+          </div>
+          <div class="summary-card">
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-val">14,7 km</div>
+                <div class="summary-lbl">DISTÂNCIA TOTAL HOJE</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-val red">5</div>
+                <div class="summary-lbl">INFRAÇÕES DE VELOCIDADE</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-val">41 km/h</div>
+                <div class="summary-lbl">VELOCIDADE MÁXIMA</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-val">26 km/h</div>
+                <div class="summary-lbl">VELOCIDADE MÉDIA</div>
+              </div>
+            </div>
+          </div>
+          <div class="lock-notice">
+            <span>🔒</span>
+            <span>Registros históricos são permanentes e não podem ser apagados</span>
+          </div>
+          <div class="hist-list">
+            <div class="hist-day">
+              <div class="hist-day-header">
+                <div class="hist-day-date">Hoje — 26 abr 2026</div>
+                <div class="hist-day-badge alert">3 alertas</div>
+              </div>
+              <div class="hist-bar-row">
+                <div class="hist-bar-label">Vel. máx.</div>
+                <div class="hist-bar-bg"><div class="hist-bar-f" style="width:68%;background:var(--red)"></div></div>
+                <div class="hist-bar-val" style="color:var(--red)">41 km/h</div>
+              </div>
+              <div class="hist-bar-row">
+                <div class="hist-bar-label">Vel. média</div>
+                <div class="hist-bar-bg"><div class="hist-bar-f" style="width:43%;background:var(--green)"></div></div>
+                <div class="hist-bar-val">26 km/h</div>
+              </div>
+            </div>
+            <div class="hist-day">
+              <div class="hist-day-header">
+                <div class="hist-day-date">Ontem — 25 abr 2026</div>
+                <div class="hist-day-badge ok">Sem alertas</div>
+              </div>
+              <div class="hist-bar-row">
+                <div class="hist-bar-label">Vel. máx.</div>
+                <div class="hist-bar-bg"><div class="hist-bar-f" style="width:50%;background:var(--green)"></div></div>
+                <div class="hist-bar-val">30 km/h</div>
+              </div>
+              <div class="hist-bar-row">
+                <div class="hist-bar-label">Vel. média</div>
+                <div class="hist-bar-bg"><div class="hist-bar-f" style="width:35%;background:var(--green)"></div></div>
+                <div class="hist-bar-val">21 km/h</div>
+              </div>
+            </div>
+            <div class="hist-day">
+              <div class="hist-day-header">
+                <div class="hist-day-date">24 abr 2026</div>
+                <div class="hist-day-badge alert">1 alerta</div>
+              </div>
+              <div class="hist-bar-row">
+                <div class="hist-bar-label">Vel. máx.</div>
+                <div class="hist-bar-bg"><div class="hist-bar-f" style="width:57%;background:var(--yellow)"></div></div>
+                <div class="hist-bar-val" style="color:var(--yellow)">34 km/h</div>
+              </div>
+              <div class="hist-bar-row">
+                <div class="hist-bar-label">Vel. média</div>
+                <div class="hist-bar-bg"><div class="hist-bar-f" style="width:38%;background:var(--green)"></div></div>
+                <div class="hist-bar-val">23 km/h</div>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item" onclick="showScreen('home')">
+              <div class="nav-item-icon">🏠</div><div>Início</div>
+            </div>
+            <div class="nav-item active">
+              <div class="nav-item-icon">📊</div><div>Histórico</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('alertas')">
+              <div class="nav-item-icon">🔔</div><div>Alertas</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-icon">⚙️</div><div>Config</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALERTAS -->
+      <div class="screen" id="screen-alertas">
+        <div class="alert-screen">
+          <div class="alert-header">
+            <h2>🚨 Central de Alertas</h2>
+            <p>Notificações de velocidade excessiva</p>
+          </div>
+          <div style="padding:12px 16px 0;">
+            <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;">HOJE</div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-dot red"></div>
+            <div class="alert-content">
+              <div class="alert-content-title">Velocidade excessiva <span class="label-tag new">NOVO</span></div>
+              <div class="alert-content-desc">João Pedro atingiu <strong>41 km/h</strong> — 9 km/h acima do limite permitido de 32 km/h.</div>
+              <div class="alert-content-time">🕒 Hoje às 14h23</div>
+            </div>
+          </div>
+          <div class="alert-item" style="margin-top:8px">
+            <div class="alert-dot red"></div>
+            <div class="alert-content">
+              <div class="alert-content-title">Velocidade excessiva <span class="label-tag new">NOVO</span></div>
+              <div class="alert-content-desc">João Pedro atingiu <strong>36 km/h</strong> — 4 km/h acima do limite.</div>
+              <div class="alert-content-time">🕒 Hoje às 11h07</div>
+            </div>
+          </div>
+          <div class="alert-item" style="margin-top:8px">
+            <div class="alert-dot yellow"></div>
+            <div class="alert-content">
+              <div class="alert-content-title">Atenção: perto do limite</div>
+              <div class="alert-content-desc">Velocidade de <strong>31 km/h</strong> registrada — 1 km/h abaixo do limite.</div>
+              <div class="alert-content-time">🕒 Hoje às 09h45</div>
+            </div>
+          </div>
+          <div style="padding:16px 16px 0;">
+            <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;">ONTEM</div>
+          </div>
+          <div class="alert-item">
+            <div class="alert-dot green"></div>
+            <div class="alert-content">
+              <div class="alert-content-title">Dia sem infrações ✅</div>
+              <div class="alert-content-desc">Nenhum registro de velocidade acima de 32 km/h em 25/04/2026.</div>
+              <div class="alert-content-time">🕒 25 abr — dia inteiro</div>
+            </div>
+          </div>
+          <div class="bottom-nav" style="margin-top:16px">
+            <div class="nav-item" onclick="showScreen('home')">
+              <div class="nav-item-icon">🏠</div><div>Início</div>
+            </div>
+            <div class="nav-item" onclick="showScreen('historico')">
+              <div class="nav-item-icon">📊</div><div>Histórico</div>
+            </div>
+            <div class="nav-item active">
+              <div class="nav-item-icon">🔔</div><div>Alertas</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-item-icon">⚙️</div><div>Config</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.tab-btn');
+  const map = {splash:0, cadastro:1, home:2, historico:3, alertas:4};
+  tabs[map[name]].classList.add('active');
+}
+
+function setSpeed(v) {
+  const num = document.getElementById('speed-num');
+  const bar = document.getElementById('speed-bar');
+  const alert = document.getElementById('main-alert');
+  num.textContent = v;
+  const pct = Math.min((v/60)*100, 100);
+  bar.style.width = pct + '%';
+  if (v > 32) {
+    num.classList.add('warning');
+    bar.classList.remove('safe'); bar.classList.add('warning');
+    alert.classList.remove('safe'); alert.classList.add('danger');
+    alert.innerHTML = '<div class="alert-icon">🚨</div><div><strong>ATENÇÃO!</strong> Velocidade acima do limite: ' + v + ' km/h</div>';
+  } else {
+    num.classList.remove('warning');
+    bar.classList.add('safe'); bar.classList.remove('warning');
+    alert.classList.add('safe'); alert.classList.remove('danger');
+    alert.innerHTML = '<div class="alert-icon">✅</div><div>Velocidade dentro do limite permitido</div>';
+  }
+}
+</script>
+</body>
+</html>
